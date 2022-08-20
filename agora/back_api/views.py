@@ -1,0 +1,48 @@
+from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework import status
+
+from back_api.serializers import GoodsSerializer, ProductsSerializer, MatchProductsSerializer
+# from back_api.utils import ref_goods_split, RecModel
+from back_api.nnmodel import RecModel, get_recmodel
+
+
+# @api_view(['POST'])
+# def etalons_connect(request: Request):
+#   ser = GoodsSerializer(data=request.data, many=True)
+#   if ser.is_valid():
+#     data = ser.validated_data
+#     ref_qs, goods_qs = ref_goods_split(data)
+#     model = RecModel()
+#     preds = model.ex_predict(ref_qs, goods_qs)
+#     return Response(data=preds,status=status.HTTP_200_OK)
+#   return Response(data=ser.validated_data,status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def match_products(request: Request):
+  ser = ProductsSerializer(data=request.data, many=True)
+  if ser.is_valid(True):
+    goods_qs = ser.validated_data
+    model = get_recmodel()
+    preds = model.predict(goods_qs)
+
+    ret_data = model.ser.mp_concat(goods_qs, preds, model.model.ids)
+    mp_ser = MatchProductsSerializer(data=ret_data, many=True)
+    mp_ser.is_valid(True)
+
+    return Response(data=mp_ser.validated_data,status=status.HTTP_200_OK)
+  return Response(data=ser.validated_data,status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def update_refs(request: Request):
+  ser = ProductsSerializer(data=request.data, many=True)
+  if ser.is_valid():
+    refs_qs = ser.validated_data
+    model = get_recmodel()
+    model.update_embends(refs_qs)
+
+    return Response(status=status.HTTP_202_ACCEPTED)
+  return Response(data=ser.validated_data,status=status.HTTP_400_BAD_REQUEST)
