@@ -1,5 +1,4 @@
 from back_api import models
-from dataclasses import dataclass
 
 import pandas as pd
 import numpy as np
@@ -28,15 +27,11 @@ class JsonSer(Serializer):
 class NNModel:
   
   def __init__(self) -> None:
-    self.embs = list()  # массив с ембедингами от эталонов
+    self.embs = list()  
     self.ids = list()
 
 
   def predict(self, inp: list):
-    """
-    в inp - dict 
-      "product_id", "name", "props", "is_reference", "reference_id"
-    """
     goods_df = pd.DataFrame.from_dict(inp)
     
     embs_arr = []
@@ -51,18 +46,9 @@ class NNModel:
     ans = etalons_embs @ goods_embs.T
     y_pred = ans.argmax(axis=0)
 
-    # y = goods_df.join(pd.DataFrame(self.ids).reset_index().set_index(0), on='reference_id',how='left', lsuffix='_left', rsuffix='_right')['index'].values
-
-    # from sklearn.metrics import accuracy_score
-    # print(accuracy_score(y,y_pred))
     return y_pred
 
   def add_embs(self, ids: list, embs: list):
-    # добавление новых ембедингов в озу модели
-    """
-    в inp - list[dict]
-      "id", "name", "props"
-    """
     if embs:
       data_df = pd.DataFrame.from_dict(embs)
 
@@ -88,10 +74,6 @@ class NNModel:
       self.ids += ids
 
   def embends(self, refs: list):
-    """
-    Возвращает ембединги по refs
-    (embends)
-    """
     return refs
 
   def props_preprocess(self, refs: list):

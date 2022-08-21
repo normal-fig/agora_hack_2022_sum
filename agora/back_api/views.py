@@ -3,21 +3,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 
-from back_api.serializers import GoodsSerializer, ProductsSerializer, MatchProductsSerializer
-# from back_api.utils import ref_goods_split, RecModel
-from back_api.nnmodel import RecModel, get_recmodel
-
-
-# @api_view(['POST'])
-# def etalons_connect(request: Request):
-#   ser = GoodsSerializer(data=request.data, many=True)
-#   if ser.is_valid():
-#     data = ser.validated_data
-#     ref_qs, goods_qs = ref_goods_split(data)
-#     model = RecModel()
-#     preds = model.ex_predict(ref_qs, goods_qs)
-#     return Response(data=preds,status=status.HTTP_200_OK)
-#   return Response(data=ser.validated_data,status=status.HTTP_400_BAD_REQUEST)
+from back_api.serializers import ProductsSerializer, MatchProductsSerializer
+from back_api.nnmodel import get_recmodel
 
 
 @api_view(['POST'])
