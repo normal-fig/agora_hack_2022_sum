@@ -10,8 +10,6 @@ services:
       - ./.prod.env
     depends_on:
       - db
-    volumes:
-      - ./agora:/usr/src/web/agora
   db:
     image: postgres
     restart: always
