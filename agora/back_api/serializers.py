@@ -13,16 +13,18 @@ def id_validate(value):
 
 class ProductsSerializer(ser.Serializer):
   id = ser.CharField(
-    max_length=16,
-    min_length=16
+    min_length=0
   )
   
   name = ser.CharField(
-    min_length=0
+    allow_blank=True, 
+    allow_null=True
   )
 
   props = ser.ListField(
-    child=ser.CharField(min_length=0)
+    child=ser.CharField(min_length=0, allow_blank=True, 
+    allow_null=True),
+    allow_null=True
   )
 
 
@@ -33,13 +35,11 @@ class ProductsSerializer(ser.Serializer):
 
 class MatchProductsSerializer(ser.Serializer):
   id = ser.CharField(
-    max_length=16,
-    min_length=16
+    min_length=0
   )
 
   reference_id = ser.CharField(
-    max_length=16,
-    min_length=16,
+    min_length=0,
     allow_blank=True, allow_null=True
   )
 
