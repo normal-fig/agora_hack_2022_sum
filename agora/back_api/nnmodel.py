@@ -52,23 +52,6 @@ class NNModel:
     y_pred = ans.argmax(axis=0)
     y_pred[mask] = -1
 
-    # y = goods_df.join(pd.DataFrame(self.ids).reset_index().set_index(0), on='reference_id',how='left', lsuffix='_left', rsuffix='_right')['index'].values
-
-    # from sklearn.metrics import accuracy_score
-    # print(f"{ans.max(axis=0).min()=}")
-    # with open(settings.MEDIA_ROOT / 'max.json', 'w') as out:
-    #   import json
-    #   json.dump(ans.max(axis=0).tolist(), out)
-    # print(f"{settings.MODEL_THRESHOLD=}")
-    # print(f"nulls: {mask.sum()}")
-    # print(f"{accuracy_score(y[~mask],y_pred[~mask])=}")
-    # m2 = y_pred != y
-    # ids = np.array(self.ids)
-
-    # with open(settings.MEDIA_ROOT / 'preds.json', 'w') as out:
-    #   import json
-    #   json.dump(ids[y[m2]].tolist(), out)
-    #   json.dump(ids[y_pred[m2]].tolist(), out)
     return y_pred
 
   def add_embs(self, ids: list, embs: list):

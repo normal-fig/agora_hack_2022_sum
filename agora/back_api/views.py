@@ -29,7 +29,9 @@ def update_refs(request: Request):
   if ser.is_valid():
     refs_qs = ser.validated_data
     model = get_recmodel()
-    model.update_embends(refs_qs)
-
+    try: 
+      model.update_embends(refs_qs)
+    except:
+      return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
     return Response(status=status.HTTP_202_ACCEPTED)
   return Response(data=ser.validated_data,status=status.HTTP_400_BAD_REQUEST)
