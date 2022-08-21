@@ -2,7 +2,7 @@ version: '3.8'
 services:
   web:
     build: .
-    command: bash -c "cd ./agora && gunicorn --workers=4 --bind=0.0.0.0:8000 agora.wsgi:application"
+    command: bash -c "cd ./agora && gunicorn --workers=4 --bind=0.0.0.0:8000 -k gthread agora.wsgi:application"
     ports:
       - 8100:8000
     restart: always
