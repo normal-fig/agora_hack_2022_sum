@@ -2,13 +2,12 @@ version: '3.8'
 services:
   web:
     build: .
-    # command: bash -c "cd ./agora && gunicorn --workers=4 --bind=0.0.0.0:8000 agora.wsgi:application"
-    command: python ./agora/manage.py runserver 0.0.0.0:8000
+    command: bash -c "cd ./agora && gunicorn --workers=4 --bind=0.0.0.0:8000 agora.wsgi:application"
     ports:
       - 8100:8000
     restart: always
     env_file:
-      - ./.dev.env
+      - ./.prod.env
     depends_on:
       - db
     volumes:
@@ -17,7 +16,7 @@ services:
     image: postgres
     restart: always
     env_file:
-      - ./.dev.env
+      - ./.prod.env
     # volumes:  # раскомментить, чтоб сохранять БД после остановки контейнера
     #   - db_volume:/var/lib/postgres/
 
