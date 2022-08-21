@@ -10,13 +10,15 @@ services:
       - ./.prod.env
     depends_on:
       - db
+    volumes:
+      - ./agora:/usr/src/web/agora
   db:
     image: postgres
     restart: always
     env_file:
       - ./.prod.env
-    volumes:
-      - db_volume:/var/lib/postgres/
+    # volumes:  # раскомментить, чтоб сохранять БД после остановки контейнера
+    #   - db_volume:/var/lib/postgres/
 
-volumes:
-  db_volume:
+# volumes:
+#   db_volume:

@@ -1,8 +1,10 @@
 from back_api import models
 
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import normalize
 import pandas as pd
 import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
+from django.conf import settings
 
 
 class Serializer:
@@ -20,7 +22,7 @@ class JsonSer(Serializer):
   def mp_concat(self, prods: list, refs: list, id_to_real:list):
     return [{
       'id':prods[i]['id'],
-      'reference_id':id_to_real[refs[i]]
+      'reference_id':id_to_real[refs[i]] if refs[i] != -1 else None
     } for i in range(len(prods))]
 
 
@@ -41,11 +43,32 @@ class NNModel:
     embs_arr.append(self.vectorizer_wr_props_tf.transform(goods_df['props']).toarray())
 
     goods_embs = np.concatenate(embs_arr, axis=1)
+    goods_embs = normalize(goods_embs, axis=1)
+
     etalons_embs = np.array(self.embs)
 
     ans = etalons_embs @ goods_embs.T
+    mask = ans.max(axis=0) <= settings.MODEL_THRESHOLD
     y_pred = ans.argmax(axis=0)
+    y_pred[mask] = -1
 
+    # y = goods_df.join(pd.DataFrame(self.ids).reset_index().set_index(0), on='reference_id',how='left', lsuffix='_left', rsuffix='_right')['index'].values
+
+    # from sklearn.metrics import accuracy_score
+    # print(f"{ans.max(axis=0).min()=}")
+    # with open(settings.MEDIA_ROOT / 'max.json', 'w') as out:
+    #   import json
+    #   json.dump(ans.max(axis=0).tolist(), out)
+    # print(f"{settings.MODEL_THRESHOLD=}")
+    # print(f"nulls: {mask.sum()}")
+    # print(f"{accuracy_score(y[~mask],y_pred[~mask])=}")
+    # m2 = y_pred != y
+    # ids = np.array(self.ids)
+
+    # with open(settings.MEDIA_ROOT / 'preds.json', 'w') as out:
+    #   import json
+    #   json.dump(ids[y[m2]].tolist(), out)
+    #   json.dump(ids[y_pred[m2]].tolist(), out)
     return y_pred
 
   def add_embs(self, ids: list, embs: list):
@@ -69,6 +92,7 @@ class NNModel:
       embs_arr.append(self.vectorizer_wr_props_tf.transform(data_df['props']).toarray())
 
       embs = np.concatenate(embs_arr, axis=1)
+      embs = normalize(embs, axis=1)
 
       self.embs += list(embs)
       self.ids += ids
